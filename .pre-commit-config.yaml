@@ -1,0 +1,122 @@
+default_stages: [commit, push]
+
+default_language_version:
+  python: python3.7
+
+exclude: 'venv'
+
+fail_fast: false
+
+repos:
+  - repo: local
+    hooks:
+      - id: check-poetry
+        name: Poetry check
+        description: Validates the structure of the pyproject.toml file
+        language: python
+        entry: poetry check
+        pass_filenames: false
+        files: pyproject.toml
+        always_run: true
+        additional_dependencies: [poetry]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: check-added-large-files
+        args: [
+          --maxkb=5000
+        ]
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+        args: [
+          --allow-multiple-documents
+        ]
+      - id: debug-statements
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: forbid-new-submodules
+      - id: name-tests-test
+      - id: trailing-whitespace
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.6.2
+    hooks:
+      - id: bandit
+        args: [
+          # Usage of 'assert'
+          --skip=B101
+        ]
+
+  - repo: https://github.com/psf/black
+    rev: 19.10b0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/myint/docformatter
+    rev: v1.3.1
+    hooks:
+      - id: docformatter
+        args: [
+          --in-place,
+          --wrap-summaries=120,
+          --wrap-descriptions=120,
+          --make-summary-multi-line,
+          --pre-summary-newline
+        ]
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.7.9
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v1.9.4
+    hooks:
+      - id: seed-isort-config
+        args: [
+          --application-directories, 'src:.'
+        ]
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: 4.3.21
+    hooks:
+      - id: isort
+        additional_dependencies: [toml]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.761
+    hooks:
+      - id: mypy
+
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 5.0.2
+    hooks:
+      - id: pydocstyle
+
+  - repo: https://github.com/pycqa/pylint
+    rev: pylint-2.4.2
+    hooks:
+      - id: pylint
+        additional_dependencies: [toml]
+        args: [
+          --max-line-length=120,
+          --jobs=8,
+          # Make Pylint Black compatible
+          --disable=C0330,
+          # Allow any number of instance attributes
+          --disable=R0902,
+          # Allow any number of public methods in classes
+          --disable=R0903,
+          # Allow any number of local variables
+          --disable=R0914,
+          # Allow Access to 'private' objects
+          --disable=W0212,
+          # Ignore false positive import warnings
+          --disable=E0401,
+        ]

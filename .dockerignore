@@ -1,0 +1,15 @@
+# Ignore Everything
+**
+
+# Project
+!src
+!pyproject.toml
+!poetry.lock
+
+# Maven
+!maven
+
+# DEBUG: TensorFlow with Horovod
+!data/processed/dictionary_10000.pkl
+!data/processed/test_data_10000.npz
+!data/processed/train_data_10000.npz
