@@ -8,23 +8,27 @@ version = "0.0.1"
 description = """
 Processing Kafka email events and processing them using Spark Structured Streaming.
 """
-authors = ["Cathal Mullan <cmullan@proofpoint.com>"]
+authors = [
+    "Cathal Mullan <cmullan@proofpoint.com>"
+]
+license = "Apache-2.0"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.7.*"
+taskipy = "^1.1.0"
 tqdm = "^4.36"
 requests = "^2.22"
 validators = "^0.14.0"
 talon = "^1.4"
-bs4 = "^0.0.1"
 faker = "^2.0"
 spacy = "^2.2"
 pyspark = "^2.4"
 python-dotenv = "^0.10.3"
 setuptools = "^45.1.0"
-taskipy = "^1.1.0"
 pandas = "^1.0.0"
 pyarrow = "^0.15.1"
+beautifulsoup4 = "^4.8.2"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "1.18.2"
@@ -33,15 +37,16 @@ pytest-cov = "2.7.1"
 pyspark-stubs = "^2.4"
 
 [tool.poetry.scripts]
-# External Depedencies
 download_spacy_model = "email_stream_processor.download.download_spacy_model:main"
 download_enron_dataset = "email_stream_processor.download.download_enron_dataset:main"
-
-# Spark Streaming
 eml_pipeline = "email_stream_processor.spark_stream.eml_pipeline:main"
 vectorize_emails = "email_stream_processor.spark_stream.vectorize_emails:main"
 
 [tool.taskipy.tasks]
+hook = "pre-commit autoupdate && pre-commit install"
+lint = "pre-commit run --all-files"
+test = "pytest tests/"
+validate = "task lint && task test"
 
 [tool.black]
 line-length = 120

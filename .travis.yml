@@ -7,14 +7,12 @@ python:
 stages:
   - lint
   - test
+  - build
 
 jobs:
   include:
     - stage: lint
       install:
-        # General
-        - pip install --upgrade pip
-
         # Pre-Commit
         - pip install pre-commit
         - pre-commit install-hooks
@@ -23,15 +21,30 @@ jobs:
 
     - stage: test
       install:
-        # General
-        - sudo apt-get -y update
-        - pip install --upgrade pip
-
         # Poetry
         - pip install poetry
-        - poetry install -v
+        - poetry config virtualenvs.create false
+        - poetry install
 
         # Spacy Model
         - poetry run download_spacy_model
       script:
         - pytest tests/
+
+    - stage: build
+      services:
+        - docker
+      install:
+        # Spark 3.0
+        - mkdir -p /opt/spark
+        - wget -q -O /opt/spark.tgz http://www.gtlib.gatech.edu/pub/apache/spark/spark-3.0.0-preview2/spark-3.0.0-preview2-bin-hadoop2.7.tgz
+        - tar xzf /opt/spark.tgz -C /opt
+        - mv /opt/spark-3.0.0-preview2-bin-hadoop2.7/* /opt/spark
+        - rm /opt/spark.tgz
+        - export SPARK_HOME=/opt/spark
+        - export PATH=$PATH:/opt/spark/bin
+
+        # Build Spark-Py
+        - (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
+      script:
+        - docker build -t email_stream_processor -f Dockerfile .

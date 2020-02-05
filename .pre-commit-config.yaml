@@ -3,8 +3,6 @@ default_stages: [commit, push]
 default_language_version:
   python: python3.7
 
-exclude: 'venv'
-
 fail_fast: false
 
 repos:
