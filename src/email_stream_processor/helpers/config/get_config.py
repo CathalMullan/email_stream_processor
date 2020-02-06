@@ -36,5 +36,8 @@ class Config:
     # Kubernetes
     cluster_ip: str = str(getenv("CLUSTER_IP"))
 
+    # Kafka
+    kafka_hosts: str = str(getenv("KAFKA_HOSTS"))
+
 
 CONFIG = Config()

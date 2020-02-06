@@ -1,7 +1,10 @@
 """
 Spark Structured Streaming cluster parsing raw emails from Kafka queue and converting to TensorFlow parsable format.
 """
-from pyspark.sql import SparkSession
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.streaming import StreamingQuery
+
+from email_stream_processor.helpers.config.get_config import CONFIG
 
 
 def main() -> None:
@@ -13,7 +16,7 @@ def main() -> None:
     # fmt: off
     spark: SparkSession = SparkSession.builder \
         .master("local[4]") \
-        .appName("topic_modelling") \
+        .appName("stream_pipeline") \
         .getOrCreate()
     # fmt: on
 
@@ -23,14 +26,20 @@ def main() -> None:
     logger.info("Beginning email stream processing pipeline.")
 
     # fmt: off
-    events = spark.readStream \
+    data_frame: DataFrame = spark.readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
+        .option("kafka.bootstrap.servers", CONFIG.kafka_hosts) \
         .option("subscribe", "email") \
+        .option("startingOffsets", "earliest") \
         .load()
+
+    streaming_query: StreamingQuery = data_frame.writeStream \
+        .outputMode("append") \
+        .format("console") \
+        .start()
     # fmt: on
 
-    events.show(truncate=False)
+    streaming_query.awaitTermination()
 
 
 if __name__ == "__main__":

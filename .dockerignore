@@ -6,6 +6,3 @@
 !pyproject.toml
 !poetry.lock
 !README.md
-
-# Maven Plugin Jars
-!maven
