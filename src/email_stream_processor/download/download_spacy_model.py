@@ -10,4 +10,4 @@ def main() -> None:
 
     :return: None
     """
-    spacy.cli.download(model="en_core_web_lg")
+    spacy.cli.download(model="en_core_web_sm")

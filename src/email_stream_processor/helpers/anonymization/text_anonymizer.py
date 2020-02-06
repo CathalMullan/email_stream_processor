@@ -13,7 +13,7 @@ import spacy
 from faker.providers import address, company, currency, internet, person, python
 
 # See https://blog.dominodatalab.com/making-pyspark-work-spacy-overcoming-serialization-errors/
-SPACY_TAGGER = spacy.load("en_core_web_lg")
+SPACY_TAGGER = spacy.load("en_core_web_sm")
 
 FAKE = faker.Faker(locale="en_US")
 FAKE.add_provider([internet, person, company, currency, address, python])

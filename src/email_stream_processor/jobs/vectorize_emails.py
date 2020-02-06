@@ -19,7 +19,7 @@ from email_stream_processor.helpers.globals.directories import PARQUET_DIR, PROC
 
 # https://blog.dominodatalab.com/making-pyspark-work-spacy-overcoming-serialization-errors/
 # spaCy isn't serializable but loading it is semi-expensive
-SPACY = spacy.load("en_core_web_lg")
+SPACY = spacy.load("en_core_web_sm")
 
 
 def is_valid_token(token: Token) -> bool:
