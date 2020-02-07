@@ -161,22 +161,22 @@ def test_message_contents_address_list_to_str(message_contents: MessageContent) 
     if to_address_str or to_address_str == "":
         assert isinstance(to_address_str, str)
     else:
-        assert to_address_str is None
+        assert to_address_str == ""
 
     cc_address_str: Optional[str] = message_contents.address_list_to_str("cc_address_list")
     if cc_address_str or cc_address_str == "":
         assert isinstance(cc_address_str, str)
     else:
-        assert cc_address_str is None
+        assert cc_address_str == ""
 
     bcc_address_str: Optional[str] = message_contents.address_list_to_str("bcc_address_list")
     if bcc_address_str or bcc_address_str == "":
         assert isinstance(bcc_address_str, str)
     else:
-        assert bcc_address_str is None
+        assert bcc_address_str == ""
 
     other_address_str: Optional[str] = message_contents.address_list_to_str("other_address_str")
-    assert other_address_str is None
+    assert other_address_str == ""
 
 
 @pytest.mark.parametrize("message_contents", ALL_CONTENTS)

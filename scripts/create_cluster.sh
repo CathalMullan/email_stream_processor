@@ -13,22 +13,24 @@ minikube start
 eval $(minikube docker-env)
 
 # Build base image (spark-py:spark)
+# http://apache-spark-developers-list.1001551.n3.nabble.com/Apache-Spark-Docker-image-repository-td28830.html
+# https://issues.apache.org/jira/browse/SPARK-24655
 export SPARK_HOME=/opt/spark
 (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
 
-# Build custom image
-docker build . -t email_stream_processor
-
-# Spark Essentials
+# Spark essentials
 kubectl apply -f kubernetes/spark_namespace.yaml
 kubectl apply -f kubernetes/
+
+# Build custom image
+docker build . -t email_stream_processor
 
 # Submit job
 spark-submit \
     --master k8s://https://$(minikube ip):8443 \
     --deploy-mode cluster \
-    --name processing \
-    --conf spark.executor.instances=2 \
+    --name email_stream_processor \
+    --conf spark.executor.instances=4 \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
     --conf spark.kubernetes.container.image=email_stream_processor \
     --conf spark.kubernetes.namespace=spark \
@@ -37,7 +39,10 @@ spark-submit \
     --conf spark.kubernetes.executor.secretKeyRef.KAFKA_HOSTS=kafka-secret:hosts \
     /app/src/email_stream_processor/jobs/stream_pipeline.py
 
-# View Spark Dashboard
+# Spark Dashboard
 kubectl get pod
 kubectl port-forward <driver-pod-name> 4040:4040
 open -n -a "Google Chrome" --args "--new-tab" http://localhost:4040
+
+# Kube Dashboard
+minikube dashboard

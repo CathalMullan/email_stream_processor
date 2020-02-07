@@ -6,10 +6,12 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from email.message import EmailMessage
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
+
+from pyspark.sql.types import StringType, StructField, StructType
 
 from email_stream_processor.helpers.globals.directories import ENRON_DIR
-from email_stream_processor.helpers.input.input_eml import read_message_from_file
+from email_stream_processor.helpers.input.input_eml import read_message_from_file, read_message_from_string
 from email_stream_processor.helpers.validation.text_validation import is_valid_length
 from email_stream_processor.parsing.message_body_extraction import get_message_body
 from email_stream_processor.parsing.message_header_extraction import (
@@ -63,14 +65,14 @@ class MessageContent:
 
         return True
 
-    def address_list_to_str(self, address_list: str) -> Optional[str]:
+    def address_list_to_str(self, address_list: str) -> str:
         """
         Concatenate address list into a comma separated list.
 
         :return: string representation of to_address_list
         """
         if address_list not in ("to_address_list", "cc_address_list", "bcc_address_list"):
-            return None
+            return ""
 
         address_list_variable = self.__getattribute__(address_list)
 
@@ -79,7 +81,7 @@ class MessageContent:
 
         return ", ".join(address_list_variable).strip()
 
-    def as_str(self) -> Optional[str]:
+    def as_str(self) -> str:
         """
         Convert MessageContents instance into an eml like string.
 
@@ -97,7 +99,7 @@ Subject: {self.subject}
 {self.body}
 """.strip()
 
-    def as_dict(self) -> Optional[Dict[str, Union[Optional[str], Optional[datetime]]]]:
+    def as_dict(self) -> Dict[str, str]:
         """
         Convert MessageContents instance into a dict.
 
@@ -105,7 +107,7 @@ Subject: {self.subject}
         """
         return {
             "message_id": self.message_id,
-            "date": self.date,
+            "date": str(self.date),
             "from_address": self.from_address,
             "to_addresses": self.address_list_to_str("to_address_list"),
             "cc_addresses": self.address_list_to_str("cc_address_list"),
@@ -164,3 +166,38 @@ def eml_path_to_message_contents(eml_path: Path) -> Optional[MessageContent]:
 
     print(f"Successfully parsed file {os.path.relpath(str(eml_path), f'{ENRON_DIR}/maildir')}", flush=True)
     return message_contents
+
+
+# Representation of Message Contents Dict in Spark
+MESSAGE_CONTENTS_STRUCT = StructType(
+    [
+        StructField(name="message_id", dataType=StringType(), nullable=True),
+        StructField(name="date", dataType=StringType(), nullable=True),
+        StructField(name="from_address", dataType=StringType(), nullable=True),
+        StructField(name="to_addresses", dataType=StringType(), nullable=True),
+        StructField(name="bcc_addresses", dataType=StringType(), nullable=True),
+        StructField(name="subject", dataType=StringType(), nullable=True),
+        StructField(name="body", dataType=StringType(), nullable=True),
+    ]
+)
+
+
+def eml_bytes_to_spark_message_contents(eml_bytes: bytearray) -> Optional[Dict[str, str]]:
+    """
+    Process eml file as bytes and convert to message content dict.
+
+    :param eml_bytes: bytes representation of an eml file
+    :return: optional message content
+    """
+    eml_str = eml_bytes.decode()
+
+    email_message: Optional[EmailMessage] = read_message_from_string(eml_str)
+    if not isinstance(email_message, EmailMessage):
+        return None
+
+    message_contents: Optional[MessageContent] = extract_message_contents(email_message)
+    if not isinstance(message_contents, MessageContent):
+        return None
+
+    message_contents_dict: Dict[str, str] = message_contents.as_dict()
+    return message_contents_dict

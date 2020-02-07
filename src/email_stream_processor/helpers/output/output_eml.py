@@ -20,7 +20,8 @@ def output_eml(message_contents: List[MessageContent], append_original: bool) ->
     Path(CLEAN_ENRON_DIR).mkdir(exist_ok=True, parents=True)
 
     for message_content in message_contents:
-        with open(f"{CLEAN_ENRON_DIR}/{int(round(time.time() * 1000))}", "w") as file:
+        generated_file_name = f"{CLEAN_ENRON_DIR}/{int(round(time.time() * 1000))}"
+        with open(generated_file_name, "w") as file:
             file.write(message_content.as_str() + "\n")
             file.write("\n")
             if append_original:

@@ -479,6 +479,14 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 category = "main"
+description = "Python library for the snappy compression library from Google"
+name = "python-snappy"
+optional = false
+python-versions = "*"
+version = "0.5.4"
+
+[[package]]
+category = "main"
 description = "World timezone definitions, modern and historical"
 name = "pytz"
 optional = false
@@ -767,7 +775,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools"]
 
 [metadata]
-content-hash = "53bed17e7fe7c83f84e7e5e00d870b6b2d148cd755ff7dfca73ee5c679558606"
+content-hash = "fcca9775f0f6fa4a76ff844d8e43a556adee789cd545c2a484dddc1777219c24"
 python-versions = "3.7.*"
 
 [metadata.files]
@@ -1110,6 +1118,10 @@ python-dateutil = [
 ]
 python-dotenv = [
     {file = "python-dotenv-0.10.5.tar.gz", hash = "sha256:f254bfd0c970d64ccbb6c9ebef3667ab301a71473569c991253a481f1c98dddc"},
+]
+python-snappy = [
+    {file = "python-snappy-0.5.4.tar.gz", hash = "sha256:d9c26532cfa510f45e8d135cde140e8a5603d3fb254cfec273ebc0ecf9f668e2"},
+    {file = "python_snappy-0.5.4-cp36-cp36m-macosx_10_7_x86_64.whl", hash = "sha256:9c0ba725755b749ef9b03f6ed7582cefb957c0d9f6f064a7c4314148a9dbdb61"},
 ]
 pytz = [
     {file = "pytz-2019.3-py2.py3-none-any.whl", hash = "sha256:1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d"},

@@ -42,6 +42,10 @@ RUN pyenv rehash
 # Install Poetry
 RUN pip install poetry==${POETRY_VERSION}
 
+# Install Snappy
+RUN apt-get -y install \
+    libsnappy-dev
+
 # Install Dependencies & Project
 WORKDIR /app
 

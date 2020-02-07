@@ -6,8 +6,6 @@ from multiprocessing.pool import Pool
 from pathlib import Path
 from typing import List, Optional
 
-from natsort import natsorted
-
 from email_stream_processor.helpers.globals.directories import ENRON_DIR, list_files_in_folder
 from email_stream_processor.helpers.output.output_parquet import output_parquet
 from email_stream_processor.parsing.message_contents_extraction import MessageContent, eml_path_to_message_contents
@@ -20,14 +18,6 @@ def main() -> None:
     :return: None
     """
     file_paths: List[Path] = list_files_in_folder(f"{ENRON_DIR}/maildir")
-
-    # DEBUG - Sort files like Unix filesystem
-    str_paths: List[str] = [str(path) for path in file_paths]
-    file_paths = [Path(path) for path in natsorted(str_paths)]
-
-    # DEBUG - Limit number of files processed
-    file_paths = file_paths[:50_000]
-
     start_time: int = int(time.time())
 
     with Pool(processes=24) as pool:

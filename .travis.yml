@@ -21,6 +21,9 @@ jobs:
 
     - stage: test
       install:
+        # Snappy
+        - sudo apt-get -y install libsnappy-dev
+
         # Poetry
         - pip install poetry
         - poetry config virtualenvs.create false
