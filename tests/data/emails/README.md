@@ -1,5 +1,5 @@
 # Test Emails
-Publicly available emails from parsing libraries to verify workflow.
+Publicly available emails from parsing libraries to verify pipeline.
 
 ## mikel-mail
 * https://github.com/mikel/mail/tree/master/spec/fixtures/emails
