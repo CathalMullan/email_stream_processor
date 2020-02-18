@@ -1,13 +1,10 @@
 """
 Convert a single message content to a parquet file with valid/invalid paths.
 """
-from email.message import EmailMessage
-
 from email_stream_processor.helpers.output.output_parquet import output_parquet
 from email_stream_processor.parsing.message_contents_extraction import MessageContent
 
 MESSAGE_CONTENTS = MessageContent(
-    original_message=EmailMessage(),
     message_id="hello@world.com",
     date=None,
     from_address="valid@email_1.com",

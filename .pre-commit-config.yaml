@@ -117,4 +117,6 @@ repos:
           --disable=W0212,
           # Ignore false positive import warnings
           --disable=E0401,
+          # Allow TODO comments
+          --disable=W0511,
         ]

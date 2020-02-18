@@ -30,7 +30,6 @@ class MessageContent:
     Select components and headers of a parsed EmailMessage.
     """
 
-    original_message: EmailMessage
     original_path: Optional[str] = None
     message_id: str = ""
     date: Optional[datetime] = None
@@ -49,18 +48,22 @@ class MessageContent:
         """
         # Require a valid message-id (generated or otherwise)
         if not self.message_id:
+            print("Invalid message-id.")
             return False
 
         # Require a valid from address
         if not self.from_address:
+            print("No 'From' address")
             return False
 
         # Require at least one valid to address
         if not self.to_address_list or all(address == "" for address in self.to_address_list):
+            print("No 'To' address.")
             return False
 
         # Require a message body of reasonable length
         if not self.body or not is_valid_length(text=self.body, minimum=250, maximum=5_000):
+            print("Invalid body length.")
             return False
 
         return True
@@ -126,23 +129,26 @@ def extract_message_contents(message: EmailMessage) -> Optional[MessageContent]:
     :param message: a parsed EmailMessage
     :return: optional parsed message content
     """
-    message_contents = MessageContent(original_message=message)
-
+    # Validate required headers are present.
     raw_headers: Optional[Dict[str, str]] = get_message_raw_headers(message=message)
     if not raw_headers:
+        print("Invalid headers.")
         return None
 
-    message_contents.message_id = get_message_message_id(message_id_str=raw_headers.get("message-id"))
-    message_contents.date = get_message_date(date_header_str=raw_headers.get("date"))
+    # Build message contents
+    message_contents = MessageContent(
+        message_id=get_message_message_id(message_id_str=raw_headers.get("message-id")),
+        date=get_message_date(date_header_str=raw_headers.get("date")),
+        from_address=get_message_address(header_str=raw_headers.get("from")),
+        to_address_list=get_message_address_list(header_str=raw_headers.get("to")),
+        cc_address_list=get_message_address_list(header_str=raw_headers.get("cc")),
+        bcc_address_list=get_message_address_list(header_str=raw_headers.get("bcc")),
+        subject=get_message_subject(subject_header_str=raw_headers.get("subject")),
+        body=get_message_body(message=message),
+    )
 
-    message_contents.from_address = get_message_address(header_str=raw_headers.get("from"))
-    message_contents.to_address_list = get_message_address_list(header_str=raw_headers.get("to"))
-    message_contents.cc_address_list = get_message_address_list(header_str=raw_headers.get("cc"))
-    message_contents.bcc_address_list = get_message_address_list(header_str=raw_headers.get("bcc"))
-
-    message_contents.subject = get_message_subject(subject_header_str=raw_headers.get("subject"))
-    message_contents.body = get_message_body(message=message)
-
+    # Validate final state of message.
+    # TODO: Consider using exceptions to align with Python standards.
     if not message_contents.validate():
         return None
 
@@ -182,21 +188,21 @@ MESSAGE_CONTENTS_STRUCT = StructType(
 )
 
 
-def eml_bytes_to_spark_message_contents(eml_bytes: bytearray) -> Optional[Dict[str, str]]:
+def eml_str_to_spark_message_contents(eml_str: str) -> Optional[Dict[str, str]]:
     """
     Process eml file as bytes and convert to message content dict.
 
-    :param eml_bytes: bytes representation of an eml file
+    :param eml_str: str representation of an eml file
     :return: optional message content
     """
-    eml_str = eml_bytes.decode()
-
-    email_message: Optional[EmailMessage] = read_message_from_string(eml_str)
+    email_message: Optional[EmailMessage] = read_message_from_string(eml_str.strip())
     if not isinstance(email_message, EmailMessage):
+        print(f"Could not parse string to EmailMessage")
         return None
 
     message_contents: Optional[MessageContent] = extract_message_contents(email_message)
     if not isinstance(message_contents, MessageContent):
+        print(f"Could not parse string to MessageContent")
         return None
 
     message_contents_dict: Dict[str, str] = message_contents.as_dict()

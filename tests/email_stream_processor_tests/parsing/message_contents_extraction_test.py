@@ -16,7 +16,6 @@ from email_stream_processor.parsing.message_contents_extraction import (
 )
 
 VALID_CONTENTS = MessageContent(
-    original_message=EmailMessage(),
     message_id="hello@world.com",
     date=None,
     from_address="valid@email_1.com",
@@ -35,7 +34,6 @@ Here is a valid body, with body longer than 500 chars. Here is a valid body, wit
 )
 
 INVALID_CONTENTS_NO_FROM = MessageContent(
-    original_message=EmailMessage(),
     message_id="hello@world.com",
     date=None,
     from_address="",
@@ -47,7 +45,6 @@ INVALID_CONTENTS_NO_FROM = MessageContent(
 )
 
 INVALID_CONTENTS_NO_TO = MessageContent(
-    original_message=EmailMessage(),
     message_id="hello@world.com",
     date=None,
     from_address="valid@email_1.com",
@@ -59,7 +56,6 @@ INVALID_CONTENTS_NO_TO = MessageContent(
 )
 
 INVALID_CONTENTS_NO_BODY = MessageContent(
-    original_message=EmailMessage(),
     message_id="hello@world.com",
     date=None,
     from_address="valid@email_1.com",
@@ -71,7 +67,6 @@ INVALID_CONTENTS_NO_BODY = MessageContent(
 )
 
 INVALID_CONTENTS_NO_MESSAGE_ID = MessageContent(
-    original_message=EmailMessage(),
     message_id="",
     date=None,
     from_address="valid@email_1.com",

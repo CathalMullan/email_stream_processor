@@ -18,8 +18,12 @@ def read_message_from_string(message_str: str) -> Optional[EmailMessage]:
     :param message_str: eml file as a string
     :return: parsed EmailMessage from string
     """
-    # the policy 'strict' makes this return an EmailMessage class (Python 3.6+), rather than a Message class.
-    email_message: EmailMessage = message_from_string(message_str, policy=strict)  # type: ignore
+    try:
+        # the policy 'strict' makes this return an EmailMessage class (Python 3.6+), rather than a Message class.
+        email_message: EmailMessage = message_from_string(message_str, policy=strict)  # type: ignore
+    except MessageDefect:
+        print(f"Could not parse string to EmailMessage")
+        return None
 
     return email_message
 
