@@ -16,7 +16,6 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.7.*"
-taskipy = "^1.1.0"
 tqdm = "^4.36"
 requests = "^2.22"
 validators = "^0.14.0"
@@ -42,12 +41,6 @@ download_spacy_model = "email_stream_processor.download.download_spacy_model:mai
 download_enron_dataset = "email_stream_processor.download.download_enron_dataset:main"
 eml_pipeline = "email_stream_processor.spark_stream.eml_pipeline:main"
 vectorize_emails = "email_stream_processor.spark_stream.vectorize_emails:main"
-
-[tool.taskipy.tasks]
-hook = "pre-commit autoupdate && pre-commit install"
-lint = "pre-commit run --all-files"
-test = "pytest tests/"
-validate = "task lint && task test"
 
 [tool.black]
 line-length = 120

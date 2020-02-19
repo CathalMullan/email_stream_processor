@@ -1,5 +1,6 @@
 os: linux
 dist: bionic
+
 language: python
 python:
   - 3.7
@@ -7,38 +8,37 @@ python:
 stages:
   - lint
   - test
-  - build
+  - docker
+  - deploy
+
+services:
+  - docker
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_3a3336ff2445_key -iv $encrypted_3a3336ff2445_iv -in .travis/travis-ci_service_account.json.enc -out travis-ci_service_account.json -d
 
 jobs:
   include:
     - stage: lint
       install:
-        # Pre-Commit
         - pip install pre-commit
         - pre-commit install-hooks
       script:
-        - pre-commit run --all-files
+        - make lint
 
     - stage: test
       install:
-        # Snappy
         - sudo apt-get -y install libsnappy-dev
 
-        # Poetry
         - pip install poetry
         - poetry config virtualenvs.create false
         - poetry install
-
-        # Spacy Model
         - poetry run download_spacy_model
       script:
-        - pytest tests/
+        - make test
 
-    - stage: build
-      services:
-        - docker
+    - stage: docker
       install:
-        # Spark 3.0
         - mkdir -p /opt/spark
         - wget -q -O /opt/spark.tgz http://www.gtlib.gatech.edu/pub/apache/spark/spark-3.0.0-preview2/spark-3.0.0-preview2-bin-hadoop2.7.tgz
         - tar xzf /opt/spark.tgz -C /opt
@@ -47,7 +47,21 @@ jobs:
         - export SPARK_HOME=/opt/spark
         - export PATH=$PATH:/opt/spark/bin
 
-        # Build Spark-Py
         - (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
       script:
-        - docker build -t email_stream_processor -f Dockerfile .
+        - make docker_image
+
+    - stage: deploy
+      install:
+        - mkdir -p /opt/spark
+        - wget -q -O /opt/spark.tgz http://www.gtlib.gatech.edu/pub/apache/spark/spark-3.0.0-preview2/spark-3.0.0-preview2-bin-hadoop2.7.tgz
+        - tar xzf /opt/spark.tgz -C /opt
+        - mv /opt/spark-3.0.0-preview2-bin-hadoop2.7/* /opt/spark
+        - rm /opt/spark.tgz
+        - export SPARK_HOME=/opt/spark
+        - export PATH=$PATH:/opt/spark/bin
+
+        - (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
+      script:
+        - cat travis-ci_service_account.json | docker login -u _json_key https://gcr.io --password-stdin
+        - make docker_publish
