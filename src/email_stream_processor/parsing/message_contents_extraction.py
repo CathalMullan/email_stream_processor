@@ -44,25 +44,25 @@ class MessageContent:
         """
         Verify if MessageContents instance is valid for further processing.
 
-        :return: bool as to whether message_contents is valid
+        :return: bool whether message_contents is valid
         """
-        # Require a valid message-id (generated or otherwise)
-        if not self.message_id:
-            print("Invalid message-id.")
-            return False
-
-        # Require a valid from address
-        if not self.from_address:
-            print("No 'From' address")
-            return False
-
-        # Require at least one valid to address
-        if not self.to_address_list or all(address == "" for address in self.to_address_list):
-            print("No 'To' address.")
-            return False
+        # # Require a valid message-id (generated or otherwise)
+        # if not self.message_id:
+        #     print("Invalid message-id.")
+        #     return False
+        #
+        # # Require a valid from address
+        # if not self.from_address:
+        #     print("No 'From' address")
+        #     return False
+        #
+        # # Require at least one valid to address
+        # if not self.to_address_list or all(address == "" for address in self.to_address_list):
+        #     print("No 'To' address.")
+        #     return False
 
         # Require a message body of reasonable length
-        if not self.body or not is_valid_length(text=self.body, minimum=250, maximum=5_000):
+        if not self.body or not is_valid_length(text=self.body, minimum=200, maximum=50_000):
             print("Invalid body length.")
             return False
 
