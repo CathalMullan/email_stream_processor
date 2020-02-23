@@ -75,7 +75,7 @@ def main() -> None:
 
     :return: None
     """
-    # Ensure path exists
+    # Ensure the path exists
     Path(ENRON_DIR).mkdir(parents=True, exist_ok=True)
 
     download_tarfile()

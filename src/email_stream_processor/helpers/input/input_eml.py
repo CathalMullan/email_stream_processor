@@ -20,6 +20,7 @@ def read_message_from_string(message_str: str) -> Optional[EmailMessage]:
     """
     try:
         # the policy 'strict' makes this return an EmailMessage class (Python 3.6+), rather than a Message class.
+        # noinspection PyTypeChecker
         email_message: EmailMessage = message_from_string(message_str, policy=strict)  # type: ignore
     except MessageDefect:
         print(f"Could not parse string to EmailMessage")
@@ -30,7 +31,7 @@ def read_message_from_string(message_str: str) -> Optional[EmailMessage]:
 
 def read_message_from_file(eml_path: Path) -> Optional[EmailMessage]:
     """
-    Open a eml file and read its contents, parses to EmailMessage.
+    Open an eml file and read its contents, parses to EmailMessage.
 
     :param eml_path: path to an eml file
     :return: parsed EmailMessage from file
@@ -38,6 +39,7 @@ def read_message_from_file(eml_path: Path) -> Optional[EmailMessage]:
     with eml_path.open(encoding="utf-8", errors="replace") as file:
         try:
             # the policy 'strict' makes this return an EmailMessage class (Python 3.6+), rather than a Message class.
+            # noinspection PyTypeChecker
             email_message: EmailMessage = message_from_file(file, policy=strict)  # type: ignore
             email_message.add_header("Original-Path", file.name)
 

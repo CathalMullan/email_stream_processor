@@ -8,6 +8,8 @@ cd ../
 minikube config set memory 8192
 minikube config set cpus 4
 minikube config set disk-size 60GB
+minikube config set vm-driver virtualbox
+minikube config set kubernetes-version 1.15.0
 
 minikube start
 eval $(minikube docker-env)
@@ -40,20 +42,17 @@ spark-submit \
     --conf spark.streaming.backpressure.enabled=true \
     /app/src/email_stream_processor/jobs/stream_pipeline.py
 
-# Extract Processed Parquet
-rm -rf data/spark_streaming_parquet/*
-rm -rf data/checkpoint/*
-
-kubectl cp spark/emailstreamprocessor-677d4b7057e3f4ed-driver:spark_streaming_parquet data/spark_streaming_parquet
-kubectl cp spark/emailstreamprocessor-677d4b7057e3f4ed-driver:checkpoint data/checkpoint
-
-kubectl cp spark/${POD}:spark_streaming_parquet data/spark_streaming_parquet
-kubectl cp spark/${POD}:checkpoint data/checkpoint
-
 # Spark Dashboard
-kubectl get pod
-kubectl port-forward <driver-pod-name> 4040:4040
-open -n -a "Google Chrome" --args "--new-tab" http://localhost:4040
+kubectl get pod -n spark
+export POD_NAME=...
+kubectl port-forward -n spark ${POD_NAME} 4040:4040
 
 # Kube Dashboard
 minikube dashboard
+
+# Extract Processed Parquet from Kubernetes VM
+rm -rf data/spark_streaming_parquet/*
+rm -rf data/checkpoint/*
+
+kubectl cp spark/${POD_NAME}:spark_streaming_parquet data/spark_streaming_parquet
+kubectl cp spark/${POD_NAME}:checkpoint data/checkpoint

@@ -1,5 +1,5 @@
 """
-Read a Parquet file into a Dataframe.
+Read a Parquet file into a data frame.
 """
 from pathlib import Path
 from typing import List, Optional, Union
@@ -8,9 +8,9 @@ import pyarrow.parquet
 from pandas import DataFrame
 
 
-def read_dataframe_from_parquet(parquet_file: Union[Path, str], columns: Optional[List[str]]) -> Optional[DataFrame]:
+def read_data_frame_from_parquet(parquet_file: Union[Path, str], columns: Optional[List[str]]) -> Optional[DataFrame]:
     """
-    Read a Parquet file into a Dataframe.
+    Read a Parquet file into a data frame.
 
     :param parquet_file: path to a Parquet file
     :param columns: specific columns to retrieve from parquet file

@@ -121,7 +121,7 @@ def get_message_message_id(message_id_str: str) -> str:
 
     NOTE: No need to use unquote, as policy strict bakes this in.
 
-    :param message_id_str: the message message id header as a string
+    :param message_id_str: the message 'message id' header as a string
     :return: parsed or generated message id
     """
     # Create message-id if non found
@@ -138,16 +138,16 @@ def get_message_message_id(message_id_str: str) -> str:
 
 def get_message_raw_headers(message: EmailMessage) -> Optional[Dict[str, str]]:
     """
-    Extract the header keys and values from a email message.
+    Extract the header keys and values from an email message.
 
     Handle parsing errors that are common with individual headers.
 
     :param message: a parsed EmailMessage
-    :return: optional dictionary of header keys and values
+    :return: an optional dictionary of header keys and values
     """
     raw_headers: Dict[str, str] = {}
 
-    # Access raw headers, using items() can hang due to invalid charsets.
+    # Accessing raw headers using items() can hang due to invalid charsets.
     header_list: List[Tuple[str, str]] = list(message.raw_items())  # type: ignore
 
     for header_key, header_value in header_list:

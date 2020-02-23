@@ -15,12 +15,12 @@ from email_stream_processor.helpers.validation.address_validation import parse_a
         ('"Grants-Notification" <infoz@reactive-outpost.com>\'', True),
         ("Louise </O=ENRON/OU=NA/CN=RECIPIENTS/CN=LKITCHEN>", False),
         ("<\"'l-bene'@cornellcollege.com'\"@enron.com>", True),
-        ("", False),
+        ("Corinna Vinschen <corinna-cygwin () cygwin ! com>", True),
     ],
 )
 def test_parse_address_str(address_header: str, valid_address: bool) -> None:
     """
-    Verify addresses are parsed correctly.
+    Verify addresses get parsed correctly.
 
     :param address_header: a string potentially containing an email address
     :param valid_address: whether a valid email exists within the address_header

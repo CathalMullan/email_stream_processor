@@ -13,7 +13,7 @@ from email_stream_processor.parsing.message_contents_extraction import MessageCo
 
 def main() -> None:
     """
-    Read in the Enron dataset, parse out contents while anonymizing them then save to an parquet file and eml files.
+    Read in the Enron dataset, parse out contents while anonymizing them then save to a parquet file and eml files.
 
     :return: None
     """

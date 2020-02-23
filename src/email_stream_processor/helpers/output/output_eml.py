@@ -1,5 +1,5 @@
 """
-Convert a list of message contents into a eml files.
+Convert a list of message contents into eml files.
 """
 import time
 from pathlib import Path

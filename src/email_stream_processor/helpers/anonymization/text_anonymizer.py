@@ -111,8 +111,9 @@ def hash_salt_text(text: str) -> str:
     Take a string and returns a hashed/salted version using secret key.
 
     :param text: string to be hashed
-    :return: hashed version of string
+    :return: a hashed version of string
     """
+    # noinspection SpellCheckingInspection
     salt = b"f8bfae8c3aee9de3e72e683b948fea550aa2fd3dbae4bd2d4912def1b3c7f90f51e5e6cafc70bc6daa2df29cf96f319c6ed50e9"
 
     hashed_str: str = binascii.hexlify(

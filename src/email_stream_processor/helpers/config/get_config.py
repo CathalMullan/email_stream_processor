@@ -1,5 +1,5 @@
 """
-Parse environment into config.
+Parse environment into a config class.
 """
 from dataclasses import dataclass
 from os import getenv

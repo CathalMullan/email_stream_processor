@@ -37,6 +37,7 @@ def main() -> None:
     spark.sparkContext.setLogLevel("WARN")
 
     # Access the JVM logging context.
+    # noinspection All
     jvm_logger = spark.sparkContext._jvm.org.apache.log4j
     logger = jvm_logger.LogManager.getLogger(__name__)
     logger.warn("Beginning Kafka email stream processing pipeline.")

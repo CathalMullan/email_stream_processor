@@ -14,6 +14,11 @@ def parse_address_str(potential_address: str) -> Optional[str]:
     :param potential_address: string containing a potential email address
     :return: optional parsed address
     """
+    # Address mangled by Mailing Archives (MARC).
+    if " () " in potential_address:
+        potential_address = potential_address.replace(" () ", "@")
+        potential_address = potential_address.replace(" ! ", ".")
+
     address_tuple: Tuple[str, str] = parseaddr(potential_address)
     address_strip = address_tuple[1].strip()
 

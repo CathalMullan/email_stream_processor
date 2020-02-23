@@ -92,6 +92,7 @@ def main() -> None:
     # fmt: on
 
     # Access the JVM logging context.
+    # noinspection All
     jvm_logger = spark.sparkContext._jvm.org.apache.log4j
     logger = jvm_logger.LogManager.getLogger(__name__)
     logger.info("Beginning Topic Modelling Processing Job.")

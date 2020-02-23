@@ -21,14 +21,14 @@ def get_message_body(message: EmailMessage) -> Optional[str]:
     Get the core message body part as a cleaned string.
 
     In terms of the goal of the project, we are interested in unique unstructured text of a reasonable length.
-    So we discard forwarded/replied emails and those which are too short/long.
+    So we discard forwarded/replied emails, and those which are too short/long.
 
     NOTE: As part of the identification of actionable emails, the above is subject to change, but for now the
     presumption is otherwise.
 
     The Enron dataset used for testing seems to have quite a number of poorly parsed email bodies.
-    Issues such as incorrect splitting of urls across lines cause havoc with out attempts to clean the data.
-    Will have to make due for now, but some of the 'strange' parsing seem here is a direct result of the data used.
+    Issues such as incorrect splitting of urls across lines cause havoc without attempts to clean the data.
+    Will have to make due for now, but some 'strange' parsing seem here is a direct result of the data used.
 
     READING:
         * General discussion on the topic.
