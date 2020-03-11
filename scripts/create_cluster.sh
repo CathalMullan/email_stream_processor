@@ -25,7 +25,7 @@ kubectl apply -f kubernetes/spark_namespace.yaml
 kubectl apply -f kubernetes/
 
 # Build custom image
-docker build . -t email_stream_processor
+docker build -f worker.Dockerfile -t email_stream_processor
 
 # Submit job
 spark-submit \

@@ -22,7 +22,8 @@ crawl:
 
 .PHONY: docker_image
 docker_image:
-	docker build -t email_stream_processor -f Dockerfile .
+	docker build -t email_stream_processor -f worker.Dockerfile .
+	docker build -t stream_submit -f submit.Dockerfile .
 
 .PHONY: docker_publish
 docker_publish:
@@ -30,3 +31,6 @@ docker_publish:
 
 	docker tag email_stream_processor:latest gcr.io/distributed-email-pipeline/email_stream_processor:latest
 	docker push gcr.io/distributed-email-pipeline/email_stream_processor:latest
+
+	docker tag stream_submit:latest gcr.io/distributed-email-pipeline/stream_submit:latest
+	docker push gcr.io/distributed-email-pipeline/stream_submit:latest
