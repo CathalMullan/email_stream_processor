@@ -19,9 +19,6 @@ def main() -> None:
     """
     Spark Structured Streaming cluster parsing raw emails from Kafka queue and converting to TensorFlow parsable format.
 
-    JVM forking error?
-    sudo hostname -s 127.0.0.1
-
     :return: None
     """
     os.environ["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
@@ -33,23 +30,21 @@ def main() -> None:
         .appName("stream_pipeline") \
         .getOrCreate()
 
-    # Set the logging output to WARN level.
-    spark.sparkContext.setLogLevel("WARN")
-
     # Access the JVM logging context.
+    spark.sparkContext.setLogLevel("WARN")
     # noinspection All
     jvm_logger = spark.sparkContext._jvm.org.apache.log4j
     logger = jvm_logger.LogManager.getLogger(__name__)
     logger.warn("Beginning Kafka email stream processing pipeline.")
 
-    data_frame: DataFrame = spark. \
-        readStream. \
-        format("kafka"). \
-        option("kafka.bootstrap.servers", CONFIG.kafka_hosts). \
-        option("compression", "snappy"). \
-        option("startingOffsets", "earliest"). \
-        option("subscribe", "email"). \
-        load()
+    data_frame: DataFrame = spark \
+        .readStream \
+        .format("kafka") \
+        .option("kafka.bootstrap.servers", CONFIG.kafka_hosts) \
+        .option("compression", "snappy") \
+        .option("startingOffsets", "earliest") \
+        .option("subscribe", "email") \
+        .load()
 
     # Raw Kafka schema
     data_frame.printSchema()
@@ -67,15 +62,15 @@ def main() -> None:
     )
 
     streaming_query: StreamingQuery = data_frame \
-        .selectExpr("CAST(value AS STRING)"). \
-        withColumn("processed_text", udf_eml_str_to_spark_message_contents(col("value"))). \
-        writeStream. \
-        format("parquet"). \
-        outputMode("append"). \
-        option("path", "spark_streaming_parquet"). \
-        option("checkpointLocation", "checkpoint"). \
-        trigger(processingTime="1 minute"). \
-        start()
+        .selectExpr("CAST(value AS STRING)") \
+        .withColumn("processed_text", udf_eml_str_to_spark_message_contents(col("value"))) \
+        .writeStream \
+        .format("parquet") \
+        .outputMode("append") \
+        .option("path", "gs://distributed-email-pipeline-parquet/processed_emails.parquet") \
+        .option("checkpointLocation", "gs://distributed-email-pipeline-checkpoint/checkpoint") \
+        .trigger(processingTime="1 minute") \
+        .start()
 
     streaming_query.awaitTermination()
     # fmt: on

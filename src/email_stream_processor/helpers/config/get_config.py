@@ -33,9 +33,6 @@ class Config:
     do_faker_replacement: bool = is_true(getenv("DO_FAKER_REPLACEMENT"))
     do_address_hashing: bool = is_true(getenv("DO_ADDRESS_HASHING"))
 
-    # Kubernetes
-    cluster_ip: str = str(getenv("CLUSTER_IP"))
-
     # Kafka
     kafka_hosts: str = str(getenv("KAFKA_HOSTS"))
 
