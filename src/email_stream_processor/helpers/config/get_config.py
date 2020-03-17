@@ -35,6 +35,11 @@ class Config:
 
     # Kafka
     kafka_hosts: str = str(getenv("KAFKA_HOSTS"))
+    kafka_topic: str = str(getenv("KAFKA_TOPIC"))
+
+    # Bucket
+    bucket_parquet: str = str(getenv("BUCKET_PARQUET"))
+    bucket_checkpoint: str = str(getenv("BUCKET_CHECKPOINT"))
 
 
 CONFIG = Config()

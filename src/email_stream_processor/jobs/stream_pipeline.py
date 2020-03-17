@@ -24,11 +24,7 @@ def main() -> None:
     os.environ["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
 
     # fmt: off
-    spark: SparkSession = SparkSession \
-        .builder \
-        .master("local[4]") \
-        .appName("stream_pipeline") \
-        .getOrCreate()
+    spark: SparkSession = SparkSession.builder.getOrCreate()
 
     # Access the JVM logging context.
     spark.sparkContext.setLogLevel("WARN")
@@ -43,7 +39,7 @@ def main() -> None:
         .option("kafka.bootstrap.servers", CONFIG.kafka_hosts) \
         .option("compression", "snappy") \
         .option("startingOffsets", "earliest") \
-        .option("subscribe", "email") \
+        .option("subscribe", CONFIG.kafka_topic) \
         .load()
 
     # Raw Kafka schema
@@ -67,8 +63,8 @@ def main() -> None:
         .writeStream \
         .format("parquet") \
         .outputMode("append") \
-        .option("path", "gs://distributed-email-pipeline-parquet/processed_emails.parquet") \
-        .option("checkpointLocation", "gs://distributed-email-pipeline-checkpoint/checkpoint") \
+        .option("path", CONFIG.bucket_parquet) \
+        .option("checkpointLocation", CONFIG.bucket_checkpoint) \
         .trigger(processingTime="1 minute") \
         .start()
 
