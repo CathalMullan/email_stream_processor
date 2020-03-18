@@ -19,6 +19,9 @@ def main() -> None:
     """
     Spark Structured Streaming cluster parsing raw emails from Kafka queue and converting to TensorFlow parsable format.
 
+    JVM forking error?
+    sudo hostname -s 127.0.0.1
+
     :return: None
     """
     os.environ["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"

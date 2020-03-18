@@ -1,4 +1,4 @@
-# Using Spark 3.0 (Debian based) - not Spark 2.4 (Alpine based)
+# Using Spark 2.4.5 (Debian based)
 FROM spark-py:spark
 
 ARG PYTHON_VERSION=3.7.5

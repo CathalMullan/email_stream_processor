@@ -17,15 +17,15 @@ eval $(minikube docker-env)
 # Build base image (spark-py:spark)
 # http://apache-spark-developers-list.1001551.n3.nabble.com/Apache-Spark-Docker-image-repository-td28830.html
 # https://issues.apache.org/jira/browse/SPARK-24655
-export SPARK_HOME=/opt/spark
+export SPARK_HOME=/opt/spark-2.4.5-bin-hadoop2.7
 (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
+
+# Build custom image
+docker build -t email_stream_processor -f worker.Dockerfile .
 
 # Spark essentials
 kubectl apply -f kubernetes/spark_namespace.yaml
 kubectl apply -f kubernetes/
-
-# Build images
-docker build -t email_stream_processor -f worker.Dockerfile .
 
 # Submit job
 # https://github.com/GoogleCloudPlatform/spark-on-k8s-gcp-examples/blob/master/bigquery-wordcount/README.md
