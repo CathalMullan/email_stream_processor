@@ -30,7 +30,6 @@ def main() -> None:
     spark: SparkSession = SparkSession.builder.getOrCreate()
 
     # Access the JVM logging context.
-    spark.sparkContext.setLogLevel("WARN")
     # noinspection All
     jvm_logger = spark.sparkContext._jvm.org.apache.log4j
     logger = jvm_logger.LogManager.getLogger(__name__)
@@ -68,7 +67,7 @@ def main() -> None:
         .outputMode("append") \
         .option("path", CONFIG.bucket_parquet) \
         .option("checkpointLocation", CONFIG.bucket_checkpoint) \
-        .trigger(processingTime="1 minute") \
+        .trigger(processingTime="6 minute") \
         .start()
 
     streaming_query.awaitTermination()

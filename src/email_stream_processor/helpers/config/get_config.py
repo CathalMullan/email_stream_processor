@@ -25,7 +25,9 @@ def is_true(variable: Optional[str]) -> bool:
 @dataclass
 class Config:
     """
-    Config object.
+    Environment variable mapping object.
+
+    Allows greater control over centralised typing of environment variables.
     """
 
     # Message Extraction

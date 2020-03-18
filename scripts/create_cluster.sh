@@ -25,7 +25,8 @@ docker build -t email_stream_processor -f worker.Dockerfile .
 
 # Spark essentials
 kubectl apply -f kubernetes/spark_namespace.yaml
-kubectl apply -f kubernetes/
+kubectl apply -n streaming -f kubernetes/
+kubectl create secret -n streaming generic service-account --from-file=/Users/cmullan/.config/gcloud/gcp_service_account.json
 
 # Submit job
 # https://github.com/GoogleCloudPlatform/spark-on-k8s-gcp-examples/blob/master/bigquery-wordcount/README.md
@@ -33,16 +34,31 @@ ${SPARK_HOME}/bin/spark-submit \
     --master k8s://https://$(minikube ip):8443 \
     --deploy-mode cluster \
     --name email_stream_processor \
-    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.0-preview2 \
+    --jars https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.5/spark-sql-kafka-0-10_2.11-2.4.5.jar,https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/2.4.1/kafka-clients-2.4.1.jar,https://repo1.maven.org/maven2/com/google/cloud/bigdataoss/gcs-connector/hadoop2-2.0.1/gcs-connector-hadoop2-2.0.1-shaded.jar \
     --conf spark.executor.instances=2 \
     --conf spark.dynamicAllocation.maxExecutors=8 \
-    --conf spark.streaming.backpressure.enabled=true \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=streaming \
     --conf spark.kubernetes.container.image=email_stream_processor \
     --conf spark.kubernetes.namespace=streaming \
     --conf spark.kubernetes.driver.secretKeyRef.KAFKA_HOSTS=kafka-secret:hosts \
     --conf spark.kubernetes.executor.secretKeyRef.KAFKA_HOSTS=kafka-secret:hosts \
+    --conf spark.kubernetes.driver.secrets.service-account=/etc/secrets \
+    --conf spark.kubernetes.executor.secrets.service-account=/etc/secrets \
+    --conf spark.kubernetes.executorEnv.KAFKA_TOPIC=email \
+    --conf spark.kubernetes.executorEnv.BUCKET_PARQUET=/distributed-email-pipeline-parquet/email_parquet/ \
+    --conf spark.kubernetes.executorEnv.BUCKET_CHECKPOINT=/distributed-email-pipeline-checkpoint/checkpoint/ \
+    --conf spark.kubernetes.driverEnv.KAFKA_TOPIC=email \
+    --conf spark.kubernetes.driverEnv.BUCKET_PARQUET=/distributed-email-pipeline-parquet/email_parquet/ \
+    --conf spark.kubernetes.driverEnv.BUCKET_CHECKPOINT=/distributed-email-pipeline-checkpoint/checkpoint/ \
+    --conf spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem \
+    --conf spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS \
+    --conf spark.hadoop.fs.gs.project.id=distributed-email-pipeline \
+    --conf spark.hadoop.fs.gs.auth.service.account.enable=true \
+    --conf spark.hadoop.fs.gs.auth.service.account.json.keyfile=/etc/secrets/gcp_service_account.json \
     /app/src/email_stream_processor/jobs/stream_pipeline.py
+
+# Cleanup
+kubectl delete --all pods -n streaming
 
 # Spark Dashboard
 kubectl get pod -n streaming
