@@ -3,6 +3,7 @@ Parse environment into a config class.
 """
 from dataclasses import dataclass
 from os import getenv
+from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -30,10 +31,16 @@ class Config:
     Allows greater control over centralised typing of environment variables.
     """
 
+    # Generic
+    is_dev: bool = is_true(getenv("IS_DEV"))
+
     # Message Extraction
     do_content_tagging: bool = is_true(getenv("DO_CONTENT_TAGGING"))
     do_faker_replacement: bool = is_true(getenv("DO_FAKER_REPLACEMENT"))
     do_address_hashing: bool = is_true(getenv("DO_ADDRESS_HASHING"))
+
+    # Google Cloud
+    gcp_credentials: Path = Path(str(getenv("GCP_CREDENTIALS")))
 
     # Kafka
     kafka_hosts: str = str(getenv("KAFKA_HOSTS"))

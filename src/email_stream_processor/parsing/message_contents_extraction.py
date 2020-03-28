@@ -109,8 +109,6 @@ def extract_message_contents(message: EmailMessage) -> Optional[MessageContent]:
     """
     Extract fields from a message to a dict of contents.
 
-    TODO: Consider hashing to prevent duplicates?
-
     :param message: a parsed EmailMessage
     :return: optional parsed message content
     """
