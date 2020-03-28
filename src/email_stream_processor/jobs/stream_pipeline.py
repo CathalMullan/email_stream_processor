@@ -40,6 +40,7 @@ def main() -> None:
         .format("kafka") \
         .option("kafka.bootstrap.servers", CONFIG.kafka_hosts) \
         .option("compression", "snappy") \
+        .option("failOnDataLoss", "false") \
         .option("startingOffsets", "earliest") \
         .option("subscribe", CONFIG.kafka_topic) \
         .load()
