@@ -4,7 +4,6 @@ Functions to extract contents from message body.
 from email.message import EmailMessage
 from typing import List, Optional
 
-from bs4 import BeautifulSoup
 from talon import quotations
 
 from email_stream_processor.helpers.anonymization.text_anonymizer import (
@@ -60,7 +59,7 @@ def get_message_body(message: EmailMessage) -> Optional[str]:
         return None
 
     # Handle HTML in text
-    if "html" in core_message.get_content_subtype() or bool(BeautifulSoup(message_body, "html.parser").find()):
+    if "html" in core_message.get_content_subtype():
         message_body = strip_html_contents(text=message_body)
 
     # Use Talon to attempt to remove message quotations

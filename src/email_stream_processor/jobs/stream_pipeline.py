@@ -88,11 +88,11 @@ def main() -> None:
     streaming_query: StreamingQuery = data_frame \
         .selectExpr("CAST(value AS STRING)", "timestamp") \
         .withColumn("message", udf_eml_str_to_spark_message_contents(col("value"))) \
-        .withColumn("date", to_date(col("timestamp"), "yyyy-MM-dd")) \
-        .select("message.*", "date") \
+        .withColumn("processed_date", to_date(col("timestamp"), "yyyy-MM-dd")) \
+        .select("message.*", "processed_date") \
         .writeStream \
         .format("parquet") \
-        .partitionBy("date") \
+        .partitionBy("processed_date") \
         .outputMode("append") \
         .option("path", CONFIG.bucket_parquet) \
         .option("checkpointLocation", CONFIG.bucket_checkpoint) \
