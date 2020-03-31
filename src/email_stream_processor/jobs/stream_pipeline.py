@@ -9,12 +9,13 @@ from pyspark.sql.streaming import StreamingQuery
 from pyspark.sql.udf import UserDefinedFunction
 
 from email_stream_processor.helpers.config.get_config import CONFIG
+from email_stream_processor.helpers.globals.directories import JARS_DIR
 from email_stream_processor.parsing.message_contents_extraction import (
     MESSAGE_CONTENTS_STRUCT,
     eml_str_to_spark_message_contents,
 )
 
-SPARK_JARS = "https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.5/spark-sql-kafka-0-10_2.11-2.4.5.jar,https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/2.4.1/kafka-clients-2.4.1.jar,https://repo1.maven.org/maven2/com/google/cloud/bigdataoss/gcs-connector/hadoop2-2.0.1/gcs-connector-hadoop2-2.0.1-shaded.jar"  # noqa # pylint: disable=line-too-long
+SPARK_JARS = f"{JARS_DIR}/spark-sql-kafka-0-10_2.11-2.4.5.jar,{JARS_DIR}/kafka-clients-2.4.1.jar,{JARS_DIR}/gcs-connector-hadoop2-2.0.1-shaded.jar"  # noqa # pylint: disable=line-too-long
 
 
 def main() -> None:
@@ -48,6 +49,7 @@ def main() -> None:
     else:
         spark = SparkSession.builder \
             .appName("email_stream_processor") \
+            .config("spark.jars", SPARK_JARS) \
             .getOrCreate()
     # fmt: on
 

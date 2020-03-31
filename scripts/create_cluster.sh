@@ -34,7 +34,6 @@ ${SPARK_HOME}/bin/spark-submit \
     --master k8s://https://$(minikube ip):8443 \
     --deploy-mode cluster \
     --name email_stream_processor \
-    --jars https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.11/2.4.5/spark-sql-kafka-0-10_2.11-2.4.5.jar,https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/2.4.1/kafka-clients-2.4.1.jar,https://repo1.maven.org/maven2/com/google/cloud/bigdataoss/gcs-connector/hadoop2-2.0.1/gcs-connector-hadoop2-2.0.1-shaded.jar \
     --conf spark.executor.instances=2 \
     --conf spark.dynamicAllocation.maxExecutors=8 \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=streaming \
