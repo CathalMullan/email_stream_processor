@@ -1,4 +1,3 @@
-# Using Spark 2.4.5 (Debian based)
 FROM spark-py:spark
 
 ARG PYTHON_VERSION=3.7.5

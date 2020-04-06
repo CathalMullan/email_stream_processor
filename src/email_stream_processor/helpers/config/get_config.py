@@ -3,7 +3,6 @@ Parse environment into a config class.
 """
 from dataclasses import dataclass
 from os import getenv
-from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -39,9 +38,6 @@ class Config:
     do_faker_replacement: bool = is_true(getenv("DO_FAKER_REPLACEMENT"))
     do_address_hashing: bool = is_true(getenv("DO_ADDRESS_HASHING"))
 
-    # Google Cloud
-    gcp_credentials: Path = Path(str(getenv("GCP_CREDENTIALS")))
-
     # Kafka
     kafka_hosts: str = str(getenv("KAFKA_HOSTS"))
     kafka_topic: str = str(getenv("KAFKA_TOPIC"))
@@ -49,6 +45,9 @@ class Config:
     # Bucket
     bucket_parquet: str = str(getenv("BUCKET_PARQUET"))
     bucket_checkpoint: str = str(getenv("BUCKET_CHECKPOINT"))
+
+    # Vocabulary
+    dictionary_path: str = PROJECT_DIR + "/words.txt"
 
 
 CONFIG = Config()

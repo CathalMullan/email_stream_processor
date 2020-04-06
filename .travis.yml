@@ -8,7 +8,6 @@ python:
 stages:
   - lint
   - test
-  - docker
   - deploy
 
 services:
@@ -37,20 +36,6 @@ jobs:
       script:
         - make test
 
-    - stage: docker
-      install:
-        - mkdir -p /opt/spark
-        - wget -q -O /opt/spark.tgz http://www.gtlib.gatech.edu/pub/apache/spark/spark-2.4.5/spark-2.4.5-bin-hadoop2.7.tgz
-        - tar xzf /opt/spark.tgz -C /opt
-        - mv /opt/spark-2.4.5-bin-hadoop2.7/* /opt/spark
-        - rm /opt/spark.tgz
-        - export SPARK_HOME=/opt/spark
-        - export PATH=$PATH:/opt/spark/bin
-
-        - (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
-      script:
-        - make docker_image
-
     - stage: deploy
       install:
         - mkdir -p /opt/spark
@@ -62,6 +47,7 @@ jobs:
         - export PATH=$PATH:/opt/spark/bin
 
         - (cd ${SPARK_HOME} && ./bin/docker-image-tool.sh -t spark -p ./kubernetes/dockerfiles/spark/bindings/python/Dockerfile build)
+        - make docker_image
       script:
         - cat travis-ci_service_account.json | docker login -u _json_key https://gcr.io --password-stdin
         - make docker_publish

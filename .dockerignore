@@ -9,3 +9,6 @@
 
 # Jars
 !jars
+
+# Vocab
+!words.txt

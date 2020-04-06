@@ -29,6 +29,7 @@ pandas = "^1.0.0"
 pyarrow = "^0.15.1"
 beautifulsoup4 = "^4.8.2"
 python-snappy = "^0.5.4"
+gcsfs = "^0.6.1"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "1.18.2"
@@ -51,4 +52,4 @@ line_length = 120
 multi_line_output = 3
 combine_as_imports = true
 include_trailing_comma = true
-known_third_party = ["bs4", "dotenv", "faker", "pandas", "pyarrow", "pyspark", "pytest", "requests", "spacy", "talon", "tqdm", "validators"]
+known_third_party = ["bs4", "dotenv", "faker", "gcsfs", "numpy", "pandas", "pyarrow", "pyspark", "pytest", "requests", "scipy", "sklearn", "spacy", "talon", "tqdm", "validators"]
