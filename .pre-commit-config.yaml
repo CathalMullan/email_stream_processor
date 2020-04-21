@@ -1,7 +1,7 @@
 default_stages: [commit, push]
 
 default_language_version:
-  python: python3.7
+  python: python3.6
 
 fail_fast: false
 

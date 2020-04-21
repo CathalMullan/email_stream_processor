@@ -1,16 +1,14 @@
 """
 Extract headers and body from email message.
 """
-import os
-from dataclasses import dataclass, field
 from datetime import datetime
 from email.message import EmailMessage
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from dataclasses import dataclass, field
 from pyspark.sql.types import StringType, StructField, StructType
 
-from email_stream_processor.helpers.globals.directories import ENRON_DIR
 from email_stream_processor.helpers.input.input_eml import read_message_from_file, read_message_from_string
 from email_stream_processor.helpers.validation.text_validation import is_valid_length
 from email_stream_processor.parsing.message_body_extraction import get_message_body
@@ -48,7 +46,6 @@ class MessageContent:
         """
         # Require a message body of reasonable length
         if not self.body or not is_valid_length(text=self.body, minimum=200, maximum=50_000):
-            print("Invalid body length.")
             return False
 
         return True
@@ -115,7 +112,6 @@ def extract_message_contents(message: EmailMessage) -> Optional[MessageContent]:
     # Validate required headers are present.
     raw_headers: Optional[Dict[str, str]] = get_message_raw_headers(message=message)
     if not raw_headers:
-        print("Invalid headers.")
         return None
 
     # Build message contents
@@ -131,7 +127,6 @@ def extract_message_contents(message: EmailMessage) -> Optional[MessageContent]:
     )
 
     # Validate final state of message.
-    # TODO: Consider using exceptions to align with Python standards.
     if not message_contents.validate():
         return None
 
@@ -153,7 +148,6 @@ def eml_path_to_message_contents(eml_path: Path) -> Optional[MessageContent]:
     if not isinstance(message_contents, MessageContent):
         return None
 
-    print(f"Successfully parsed file {os.path.relpath(str(eml_path), f'{ENRON_DIR}/maildir')}", flush=True)
     return message_contents
 
 
@@ -180,12 +174,10 @@ def eml_str_to_spark_message_contents(eml_str: str) -> Optional[Dict[str, str]]:
     """
     email_message: Optional[EmailMessage] = read_message_from_string(eml_str.strip())
     if not isinstance(email_message, EmailMessage):
-        print(f"Could not parse string to EmailMessage")
         return None
 
     message_contents: Optional[MessageContent] = extract_message_contents(email_message)
     if not isinstance(message_contents, MessageContent):
-        print(f"Could not parse string to MessageContent")
         return None
 
     message_contents_dict: Dict[str, str] = message_contents.as_dict()

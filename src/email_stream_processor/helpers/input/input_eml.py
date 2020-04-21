@@ -45,7 +45,6 @@ def read_message_from_file(eml_path: Path) -> Optional[EmailMessage]:
 
             return email_message
         except MessageDefect:
-            print(f"Could not parse file {str(eml_path)} to EmailMessage")
             return None
 
 

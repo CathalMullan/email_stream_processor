@@ -1,10 +1,11 @@
 """
 Parse environment into a config class.
 """
-from dataclasses import dataclass
 from os import getenv
+from pathlib import Path
 from typing import Optional
 
+from dataclasses import dataclass
 from dotenv import load_dotenv
 
 from email_stream_processor.helpers.globals.directories import PROJECT_DIR
@@ -32,6 +33,9 @@ class Config:
 
     # Generic
     is_dev: bool = is_true(getenv("IS_DEV"))
+
+    # Google Cloud
+    gcp_credentials: Path = Path(str(getenv("GCP_CREDENTIALS")))
 
     # Message Extraction
     do_content_tagging: bool = is_true(getenv("DO_CONTENT_TAGGING"))

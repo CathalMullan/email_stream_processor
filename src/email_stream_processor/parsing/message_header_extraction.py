@@ -159,7 +159,6 @@ def get_message_raw_headers(message: EmailMessage) -> Optional[Dict[str, str]]:
 
     # Ensure headers list contains 'To', 'From' and 'Subject'
     if not all(header in all_headers.keys() for header in ["to", "from", "subject"]):
-        print(f"Missing key headers. Headers found: {all_headers.keys()}")
         return None
 
     return all_headers

@@ -99,7 +99,7 @@ def tidy_dataset(dataset: pandas.DataFrame) -> pandas.DataFrame:
     return dataset
 
 
-def gather_dataset() -> None:
+def main() -> None:
     """
     Vectorize Email Parquet to Numpy arrays.
 
@@ -168,8 +168,8 @@ def gather_dataset() -> None:
     pd_data_frame = data_frame.select("id", "processed_subject", "processed_body").toPandas()
 
     print("Flattening data.")
-    pd_data_frame["processed_subject"] = [",".join(map(str, line)) for line in pd_data_frame["processed_subject"]]
-    pd_data_frame["processed_body"] = [",".join(map(str, line)) for line in pd_data_frame["processed_body"]]
+    pd_data_frame["processed_subject"] = [" ".join(map(str, line)) for line in pd_data_frame["processed_subject"]]
+    pd_data_frame["processed_body"] = [" ".join(map(str, line)) for line in pd_data_frame["processed_body"]]
 
     vectorizer = CountVectorizer(
         decode_error="replace", strip_accents="unicode", lowercase="true", vocabulary=DICTIONARY
@@ -207,4 +207,4 @@ def gather_dataset() -> None:
 
 
 if __name__ == "__main__":
-    gather_dataset()
+    main()

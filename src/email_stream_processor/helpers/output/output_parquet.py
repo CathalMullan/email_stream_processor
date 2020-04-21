@@ -15,7 +15,7 @@ def output_parquet(message_contents: List[MessageContent], file_name: str) -> No
     Convert a list of message contents into a .parquet.snappy file.
 
     :param message_contents: list of message content
-    :param file_name: name of file to be saved (prepended with .parquet.gzip)
+    :param file_name: name of file to be saved (prepended with .parquet.snappy)
     :return: None
     """
     Path(PARQUET_DIR).mkdir(exist_ok=True, parents=True)
@@ -24,4 +24,5 @@ def output_parquet(message_contents: List[MessageContent], file_name: str) -> No
     Path(output_file).touch()
 
     data_frame = DataFrame([message_content.as_dict() for message_content in message_contents])
-    data_frame.to_parquet(fname=output_file, engine="pyarrow", compression="snappy")
+    data_frame.to_parquet(path=output_file, engine="pyarrow", compression="snappy")
+    print(f"Saved {len(data_frame)} records to file: {output_file}.")

@@ -90,7 +90,7 @@ def extract_core_message_body(message: EmailMessage) -> Optional[str]:
                     return str(part.get_content())  # type: ignore
         else:
             return str(message.get_content())
-    except (KeyError, LookupError):
+    except LookupError:
         return None
 
     return None
